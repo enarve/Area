@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -21,9 +21,9 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                             </arscnView>
                             <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="V4H-Vl-XHh">
-                                <rect key="frame" x="15" y="77" width="180" height="38"/>
+                                <rect key="frame" x="15" y="81" width="179.5" height="38"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="6vA-vm-4FW">
-                                    <rect key="frame" x="0.0" y="0.0" width="180" height="38"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="179" height="38"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Initializing AR session" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rac-xP-9Tp">
@@ -52,7 +52,7 @@
                                 </userDefinedRuntimeAttributes>
                             </visualEffectView>
                             <button opaque="NO" alpha="0.84999999999999998" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wZ0-eb-C96">
-                                <rect key="frame" x="298" y="77" width="101" height="38"/>
+                                <rect key="frame" x="298" y="81" width="101" height="38"/>
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="0.88126034768211925" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <inset key="contentEdgeInsets" minX="10" minY="8" maxX="10" maxY="8"/>
@@ -63,10 +63,19 @@
                                     <action selector="restartScene:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bAv-Z0-mfr"/>
                                 </connections>
                             </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MO4-18-x4A" customClass="PlanView" customModule="Area" customModuleProvider="target">
+                                <rect key="frame" x="174" y="692" width="220" height="150"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="220" id="104-Zq-0W3"/>
+                                    <constraint firstAttribute="height" constant="150" id="nEx-g3-Rdl"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="MO4-18-x4A" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" constant="-20" id="KF8-qZ-CZm"/>
                             <constraint firstItem="wZ0-eb-C96" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="V4H-Vl-XHh" secondAttribute="trailing" constant="20" id="MHy-pb-Twc"/>
                             <constraint firstItem="V4H-Vl-XHh" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="15" id="U4M-yD-BJ1"/>
                             <constraint firstAttribute="bottom" secondItem="eMT-0d-FLS" secondAttribute="bottom" id="b1J-En-6wK"/>
@@ -75,6 +84,7 @@
                             <constraint firstItem="eMT-0d-FLS" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="nYe-ac-0Hw"/>
                             <constraint firstItem="wZ0-eb-C96" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="33" id="nqa-o2-hcz"/>
                             <constraint firstItem="eMT-0d-FLS" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailing" id="sPI-p2-6Ib"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="MO4-18-x4A" secondAttribute="trailing" constant="20" id="wXp-1L-x8N"/>
                             <constraint firstItem="V4H-Vl-XHh" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="33" id="xKN-lS-pqD"/>
                         </constraints>
                     </view>
@@ -82,6 +92,7 @@
                         <outlet property="arView" destination="eMT-0d-FLS" id="po6-fu-hlt"/>
                         <outlet property="infoLabel" destination="Rac-xP-9Tp" id="v3V-87-563"/>
                         <outlet property="infoView" destination="V4H-Vl-XHh" id="Xkc-Zr-NXs"/>
+                        <outlet property="planView" destination="MO4-18-x4A" id="wPf-mC-LLh"/>
                         <outlet property="restartButton" destination="wZ0-eb-C96" id="W7F-0T-5Sz"/>
                     </connections>
                 </viewController>
@@ -91,7 +102,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="arrow.counterclockwise" catalog="system" width="115" height="128"/>
+        <image name="arrow.counterclockwise" catalog="system" width="113" height="128"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

@@ -15,6 +15,23 @@ class ArVC: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var infoLabel: UILabel!
     @IBOutlet weak var infoView: UIVisualEffectView!
 
+    @IBOutlet weak var planView: PlanView!
+    var planViewCornerRadius: CGFloat = 10
+    private func setupPlanView() {
+        planView.layer.cornerRadius = planViewCornerRadius
+        planView.clipsToBounds = true
+    }
+    private func updatePlanView(with objects: [SCNNode]) {
+        planView.points = []
+        planView.area = area
+        for object in objects {
+            planView.points.append(CGVector(
+                dx: Double(object.position.x),
+                dy: Double(object.position.z)
+            ))
+        }
+    }
+    
     @IBOutlet weak var restartButton: UIButton!
     @IBAction func restartScene(_ sender: UIButton) {
 //        resetTracking()
@@ -26,13 +43,25 @@ class ArVC: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 node.removeFromParentNode()
             }
         }
+        previousObjects = []
         objects = []
         area = 0.0
         infoLabel.text = firstMessage
+        planView.resetPlan()
     }
     
     // MARK: Funcs and vars
-    var objects = [PointNode]()
+    var objects = [PointNode]() {
+        didSet {
+            print("objects set", objects)
+            updatePlanView(with: objects)
+        }
+    } //{
+//        didSet {
+//            print(objects.last?.position ?? "")
+//        }
+//    }
+    var previousObjects = [PointNode]()
     
     let coachingOverlay = ARCoachingOverlayView()
     let firstMessage = "Tap on screen to place an object"
@@ -40,7 +69,12 @@ class ArVC: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     let thirdMessage = "Tap on screen to place third one. You need one more object to start"
     let errorMessage = "Did not find plane to place an object. Please, try again"
     
-    var area: Double = 0
+    var area: Double = 0 {
+        didSet {
+            print("area set", area)
+            updatePlanView(with: objects)
+        }
+    }
     
     func sortObjects() {
         
@@ -89,7 +123,50 @@ class ArVC: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         thirdQuadrant.sort(by: { $0.polygonTangent < $1.polygonTangent })
         fourthQuadrant.sort(by: { $0.polygonTangent < $1.polygonTangent })
         
+//        previousObjects = objects
         objects = firstQuadrant + secondQuadrant + thirdQuadrant + fourthQuadrant
+        
+        let indices = previousObjects.map({ $0.index })
+        print("indices", indices)
+        if objects.count > 3 {
+            for object in objects {
+                print("object.index", object.index)
+                if !indices.contains(object.index) {
+                    if let indexInArray = objects.firstIndex(of: object) {
+                        var leftNeighbourIndex = 0
+                        var rightNeighbourIndex = 0
+                        if indexInArray == 0 {
+                            leftNeighbourIndex = objects.last!.index
+                            rightNeighbourIndex = objects[1].index
+                        } else if indexInArray == objects.count - 1 {
+                            leftNeighbourIndex = objects[objects.count - 2].index
+                            rightNeighbourIndex = objects.first!.index
+                        } else {
+                            leftNeighbourIndex = objects[indexInArray - 1].index
+                            rightNeighbourIndex = objects[indexInArray + 1].index
+                        }
+                        
+                        for previousObject in previousObjects {
+                            if previousObject.index == leftNeighbourIndex {
+                                let placeIndex = previousObjects.firstIndex(of: previousObject)! + 1
+                                previousObjects.insert(object, at: placeIndex)
+                                objects = previousObjects
+                            }
+                        }
+                        
+                    }
+                    
+//                    if indexInArray == 0 {
+//                        print("edit first!")
+//                        objects = [object] + previousObjects
+//                    } else if indexInArray == objects.count - 1 {
+//                        print("edit last!")
+//                        objects = previousObjects + [object]
+//                    }
+                }
+            }
+        }
+        print(objects.map({ $0.index }))
     }
     
     func calculateArea(_ array: [SCNNode]) -> Double {
@@ -134,7 +211,9 @@ class ArVC: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             let columns = hitTest.first?.worldTransform.columns.3
             node.position = SCNVector3(x: columns!.x, y: columns!.y, z: columns!.z)
             let k = objects.count + 1
-            node.name = "\(k)"
+            node.index = k
+//            node.name = "\(k)"
+            previousObjects = objects
             objects.append(node)
             
             if objects.count == 1 {
@@ -143,6 +222,7 @@ class ArVC: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 infoLabel.text = thirdMessage
             } else if objects.count > 2 {
                 sortObjects()
+                updatePlanView(with: objects)
                 area = calculateArea(objects)
                 drawPolygon()
                 infoLabel.text = "Area: \(String(format: "%.3f", area)) m²"
@@ -163,7 +243,7 @@ class ArVC: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
         var indices: [Int32] = [Int32(objects.count)]
         indices.append(contentsOf: generateIndices(max: objects.count))
-        print("Indices: ", indices)
+//        print("Indices: ", indices)
         
         var positions = objects.map({$0.position})
         let yCoordinate: Double
@@ -207,6 +287,7 @@ class ArVC: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         arView.delegate = self
         arView.session.delegate = self
         setupCoachingOverlay()
+        setupPlanView()
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(addObject))
         arView.addGestureRecognizer(tap)
@@ -256,6 +337,7 @@ extension ArVC: ARCoachingOverlayViewDelegate {
         infoView.isHidden = true
         infoLabel.isHidden = true
         restartButton.isHidden = true
+        planView.isHidden = true
     }
     
     /// - Tag: PresentUI
@@ -264,6 +346,7 @@ extension ArVC: ARCoachingOverlayViewDelegate {
         infoView.isHidden = false
         infoLabel.isHidden = false
         restartButton.isHidden = false
+        planView.isHidden = false
     }
 
     /// - Tag: StartOver
@@ -324,4 +407,5 @@ extension SCNVector3: Equatable {
     func scalarWith(_ vector: SCNVector3) -> CGFloat {
         return CGFloat(self.x * vector.x + self.y * vector.y + self.z * vector.z)
     }
+    
 }
