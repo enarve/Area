@@ -14,12 +14,22 @@ class PlanView: UIView {
     // MARK: - Appearance constants
     
     // Color scheme
-    let customBackgroundColor: UIColor = .systemBackground
-    let lineColor: UIColor = .label
-    let gridLineColor: UIColor = .tertiarySystemGroupedBackground
+    var darkModeOn: Bool = true
+    
+    private var customBackgroundColor: UIColor = .systemBackground
+    private var lineColor: UIColor = .label
+    private var gridLineColor: UIColor = .tertiarySystemGroupedBackground
+    
+    private func switchDarkModeOff() {
+        customBackgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        lineColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        gridLineColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+    }
+    
+    // Line properties
     let gridMinorLineAlpha = 0.2
     
-    let const = 1.6 //2.6
+    let const = 2.6
     let divider: CGFloat = 5
     let trackBorderOffsetPercent: Double = 0.1
     
@@ -57,6 +67,7 @@ class PlanView: UIView {
         if !(self.subviews.contains(label)) {
             self.addSubview(label)
         }
+        label.textColor = lineColor
         
         label.sizeToFit()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -87,6 +98,9 @@ class PlanView: UIView {
     
     // MARK: - Draw
     override func draw(_ rect: CGRect) {
+        
+        switchDarkModeOff()
+        
         // label
         setupLabel()
         
