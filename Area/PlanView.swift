@@ -99,7 +99,9 @@ class PlanView: UIView {
     // MARK: - Draw
     override func draw(_ rect: CGRect) {
         
-        switchDarkModeOff()
+        if !darkModeOn {
+            switchDarkModeOff()
+        }
         
         // label
         setupLabel()
